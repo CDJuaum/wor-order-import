@@ -29,6 +29,27 @@ PHONE_REGEX = (
     r"(?:\s*(?:/\s*)?(?:\+351[\s-]?)?[29]\d{8})?"
 )
 
+PHONE_NUMBER_REGEX = r"(?:\+351[\s-]?)?[29]\d{8}"
+
+INTERNATIONAL_PHONE_REGEX = (
+    r"\+\d{1,3}[\s-]?\d{6,14}"
+    r"(?:\s*(?:/\s*)?\+\d{1,3}[\s-]?\d{6,14})?"
+)
+
+INTERNATIONAL_PHONE_NUMBER_REGEX = r"\+\d{1,3}[\s-]?\d{6,14}"
+
+WEEKDAYS = {
+    "segunda": 0,
+    "terca": 1,
+    "terça": 1,
+    "quarta": 2,
+    "quinta": 3,
+    "sexta": 4,
+    "sabado": 5,
+    "sábado": 5,
+    "domingo": 6,
+}
+
 # ==========================
 # Helper functions
 # ==========================
@@ -53,18 +74,6 @@ REPAIR_TAGS = {
     normalize("reparacoes em casa"),
     normalize("reparações em casa"),
     normalize("rep em casa"),
-}
-
-WEEKDAYS = {
-    "segunda": 0,
-    "terca": 1,
-    "terça": 1,
-    "quarta": 2,
-    "quinta": 3,
-    "sexta": 4,
-    "sabado": 5,
-    "sábado": 5,
-    "domingo": 6,
 }
 
 def clean_lines(message: str) -> list[str]:
@@ -186,12 +195,12 @@ def extract_client_phone(text: str) -> tuple[str | None, str | None]:
         ("João Silva", "912345678")
     """
 
-    phone_regex = (
-        r"(?:\+351[\s-]?)?[29]\d{8}"
-        r"(?:\s*(?:/\s*)?(?:\+351[\s-]?)?[29]\d{8})?"
-    )
+    match = re.search(INTERNATIONAL_PHONE_REGEX, text)
+    phone_regex = INTERNATIONAL_PHONE_NUMBER_REGEX
 
-    match = re.search(phone_regex, text)
+    if not match:
+        match = re.search(PHONE_REGEX, text)
+        phone_regex = PHONE_NUMBER_REGEX
 
     if not match:
         return text.strip(), None
@@ -199,8 +208,8 @@ def extract_client_phone(text: str) -> tuple[str | None, str | None]:
     phone = match.group().strip()
 
     # Standardize formatting
-    numbers = re.findall(r"(?:\+351[\s-]?)?[29]\d{8}", phone)
-    phone = " / ".join(numbers)
+    numbers = re.findall(phone_regex, phone)
+    phone = " / ".join(number.strip() for number in numbers)
 
     client = text.replace(match.group(), "")
     client = client.replace("-", "").strip()

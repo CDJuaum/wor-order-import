@@ -154,5 +154,44 @@
       "client": "João Silva",
       "phone": "+351 912345678 / +351 214123456"
     }
+  },
+  {
+    "name": "Spanish phone",
+    "message": "24/07\n\nInstall EV Charger\n\nRua X\n\nJohn Smith - +34932345678",
+    "expected": {
+        "tag": "P",
+        "date": "24/07",
+        "time": null,
+        "service": "Install EV Charger",
+        "address": "Rua X",
+        "client": "John Smith",
+        "phone": "+34932345678"
+    }
+  },
+  {
+    "name": "French phone",
+    "message": "24/07\n\nInstallation\n\nRue Y\n\nJean Dupont - +33 612345678",
+    "expected": {
+        "tag": "P",
+        "date": "24/07",
+        "time": null,
+        "service": "Installation",
+        "address": "Rue Y",
+        "client": "Jean Dupont",
+        "phone": "+33 612345678"
+    }
+  },
+  {
+    "name": "Brazilian phone",
+    "message": "24/07\n\nInstallation\n\nRue Y\n\nJean Dupont - +5562987654321",
+    "expected": {
+        "tag": "P",
+        "date": "24/07",
+        "time": null,
+        "service": "Installation",
+        "address": "Rue Y",
+        "client": "Jean Dupont",
+        "phone": "+5562987654321"
+    }
   }
 ]
