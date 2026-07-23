@@ -1,0 +1,158 @@
+[
+  {
+    "name": "Basic service",
+    "message": "24/07 14:30\n\nInstall EV Charger\n\nRua da Liberdade 120\nLisboa\n\nJoão Silva - 912345678",
+    "expected": {
+      "tag": "P",
+      "date": "24/07",
+      "time": "14:30",
+      "service": "Install EV Charger",
+      "address": "Rua da Liberdade 120 Lisboa",
+      "client": "João Silva",
+      "phone": "912345678"
+    }
+  },
+  {
+    "name": "Service with landline",
+    "message": "24/07 14:30\n\nInstall EV Charger\n\nRua da Liberdade 120\n\nJoão Silva - 912345678 / 211234567",
+    "expected": {
+      "tag": "P",
+      "date": "24/07",
+      "time": "14:30",
+      "service": "Install EV Charger",
+      "address": "Rua da Liberdade 120",
+      "client": "João Silva",
+      "phone": "912345678 / 211234567"
+    }
+  },
+  {
+    "name": "Repair at home",
+    "message": "Amanhã 18h\n\nRep Casa\n\nTrocar tomada\n\nRua das Flores 10\n\nPedro Costa - 912345678",
+    "expected": {
+      "tag": "C",
+      "date": "24/07",
+      "time": "18:00",
+      "service": "Trocar tomada",
+      "address": "Rua das Flores 10",
+      "client": "Pedro Costa",
+      "phone": "912345678"
+    }
+  },
+  {
+    "name": "Repair variation",
+    "message": "amanhã 18:00\n\nReparações em Casa\n\nTrocar disjuntor\n\nRua Central 45\n\nMaria Santos - 912345678 / 214567890",
+    "expected": {
+      "tag": "C",
+      "date": "24/07",
+      "time": "18:00",
+      "service": "Trocar disjuntor",
+      "address": "Rua Central 45",
+      "client": "Maria Santos",
+      "phone": "912345678 / 214567890"
+    }
+  },
+  {
+    "name": "Weekday scheduling",
+    "message": "Sexta 18h\n\nInstalação de quadro\n\nRua Azul 8\n\nCarlos Silva - 912345678",
+    "expected": {
+      "tag": "P",
+      "date": "24/07",
+      "time": "18:00",
+      "service": "Instalação de quadro",
+      "address": "Rua Azul 8",
+      "client": "Carlos Silva",
+      "phone": "912345678"
+    }
+  },
+  {
+    "name": "Weekday only",
+    "message": "Terça\n\nTrocar tomada\n\nRua Verde 22\n\nJosé Pereira - 912345678",
+    "expected": {
+      "tag": "P",
+      "date": "28/07",
+      "time": null,
+      "service": "Trocar tomada",
+      "address": "Rua Verde 22",
+      "client": "José Pereira",
+      "phone": "912345678"
+    }
+  },
+  {
+    "name": "Time only",
+    "message": "18:00\n\nInstalação de carregador\n\nRua Nova 12\n\nAna Lopes - 912345678",
+    "expected": {
+      "tag": "P",
+      "date": "23/07",
+      "time": "18:00",
+      "service": "Instalação de carregador",
+      "address": "Rua Nova 12",
+      "client": "Ana Lopes",
+      "phone": "912345678"
+    }
+  },
+  {
+    "name": "No date or time",
+    "message": "Instalação de carregador\n\nRua Nova 12\n\nAna Lopes - 912345678",
+    "expected": {
+      "tag": "P",
+      "date": "23/07",
+      "time": null,
+      "service": "Instalação de carregador",
+      "address": "Rua Nova 12",
+      "client": "Ana Lopes",
+      "phone": "912345678"
+    }
+  },
+  {
+    "name": "Explicit date only",
+    "message": "24/07\n\nTrocar campainha\n\nRua da Escola 30\n\nMiguel Rocha - 912345678",
+    "expected": {
+      "tag": "P",
+      "date": "24/07",
+      "time": null,
+      "service": "Trocar campainha",
+      "address": "Rua da Escola 30",
+      "client": "Miguel Rocha",
+      "phone": "912345678"
+    }
+  },
+  {
+    "name": "Multiline address",
+    "message": "24/07 09:00\n\nInstalação de carregador\n\nRua Principal 123\n3º Direito\nLisboa\n\nJoão Silva - 912345678",
+    "expected": {
+      "tag": "P",
+      "date": "24/07",
+      "time": "09:00",
+      "service": "Instalação de carregador",
+      "address": "Rua Principal 123 3º Direito Lisboa",
+      "client": "João Silva",
+      "phone": "912345678"
+    }
+  },
+  {
+    "name": "Phone without slash",
+    "message": "24/07\n\nTrocar diferencial\n\nRua A\n\nJoão Silva - 912345678 214123456",
+    "expected": {
+      "tag": "P",
+      "date": "24/07",
+      "time": null,
+      "service": "Trocar diferencial",
+      "address": "Rua A",
+      "client": "João Silva",
+      "phone": "912345678 / 214123456"
+    }
+  },
+  {
+    "name": "Phone with country code",
+    "message": "24/07 15:00\n\nInstalação\n\nRua B\n\nJoão Silva - +351 912345678 / +351 214123456",
+    "expected": {
+      "tag": "P",
+      "date": "24/07",
+      "time": "15:00",
+      "service": "Instalação",
+      "address": "Rua B",
+      "client": "João Silva",
+      "phone": "+351 912345678 / +351 214123456"
+    }
+  }
+]

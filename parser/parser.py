@@ -1,6 +1,7 @@
 import re
 import unicodedata
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 
 
 
@@ -54,6 +55,18 @@ REPAIR_TAGS = {
     normalize("rep em casa"),
 }
 
+WEEKDAYS = {
+    "segunda": 0,
+    "terca": 1,
+    "terça": 1,
+    "quarta": 2,
+    "quinta": 3,
+    "sexta": 4,
+    "sabado": 5,
+    "sábado": 5,
+    "domingo": 6,
+}
+
 def clean_lines(message: str) -> list[str]:
     """
     Removes empty lines and leading/trailing whitespace.
@@ -72,33 +85,94 @@ def looks_like_phone(text: str) -> bool:
 def looks_like_datetime(text: str) -> bool:
     """
     Detects common date/time formats.
-
-    Examples:
-        24/07
-        24/07 14:30
-        24-07
-        14:30
     """
-    patterns = [
-        r"\d{1,2}[/-]\d{1,2}",
-        r"\d{1,2}:\d{2}",
-    ]
+    text = normalize(text)
 
-    return any(re.search(pattern, text) for pattern in patterns)
+    if re.search(r"\d{1,2}[/-]\d{1,2}", text):
+        return True
+
+    if re.search(r"\d{1,2}(?:h|:\d{2})", text):
+        return True
+
+    if "amanha" in text:
+        return True
+
+    if any(day in text for day in WEEKDAYS):
+        return True
+
+    return False
 
 
-def extract_datetime(text: str) -> tuple[str | None, str | None]:
-    date = None
+def extract_datetime(
+    text: str,
+    reference_date: datetime | None = None
+) -> tuple[str | None, str | None]:
+    
+    text = normalize(text)
+
+    if reference_date is None:
+        reference_date = datetime.today()
+
+    today = reference_date
+
+    date = today.strftime("%d/%m")
     time = None
 
-    date_match = re.search(r"\d{1,2}[/-]\d{1,2}", text)
-    time_match = re.search(r"\d{1,2}:\d{2}", text)
+    # -------------------------
+    # Explicit date
+    # -------------------------
+
+    date_match = re.search(r"(\d{1,2})[/-](\d{1,2})", text)
 
     if date_match:
-        date = date_match.group()
+        day = int(date_match.group(1))
+        month = int(date_match.group(2))
+
+        date = f"{day:02d}/{month:02d}"
+
+    # -------------------------
+    # Tomorrow
+    # -------------------------
+
+    elif "amanha" in text:
+        tomorrow = today + timedelta(days=1)
+        date = tomorrow.strftime("%d/%m")
+
+    # -------------------------
+    # Weekday
+    # -------------------------
+
+    else:
+        for weekday_name, weekday_number in WEEKDAYS.items():
+
+            if weekday_name in text:
+
+                days_ahead = (weekday_number - today.weekday()) % 7
+
+                if days_ahead == 0:
+                    days_ahead = 7
+
+                target = today + timedelta(days=days_ahead)
+
+                date = target.strftime("%d/%m")
+                break
+
+    # -------------------------
+    # Time
+    # -------------------------
+
+    time_match = re.search(r"(\d{1,2})(?:h|:)(\d{2})?", text)
 
     if time_match:
-        time = time_match.group()
+
+        hour = int(time_match.group(1))
+
+        minutes = time_match.group(2)
+
+        if minutes is None:
+            minutes = "00"
+
+        time = f"{hour:02d}:{minutes}"
 
     return date, time
 
@@ -157,11 +231,19 @@ def extract_tag(lines: list[str]) -> tuple[str, list[str]]:
 # Main parser
 # ==========================
 
-def parse_message(message: str) -> Service:
+def parse_message(
+    message: str,
+    reference_date: datetime | None = None
+) -> Service:
 
     lines = clean_lines(message)
 
-    result = Service()
+    if reference_date is None:
+        reference_date = datetime.today()
+
+    result = Service(
+        date=reference_date.strftime("%d/%m")
+    )
 
     # Detect tag
     result.tag, lines = extract_tag(lines)
@@ -191,15 +273,14 @@ def parse_message(message: str) -> Service:
 if __name__ == "__main__":
 
     sample = """
-        24/07 14:30
+        quarta 10h
 
         Install EV Charger
 
         Rua da Liberdade 120
-        Lisboa
+        Lisboa 1150-214
 
         João Silva - 912345678 211234567
-        
 """
 
     service = parse_message(sample)
