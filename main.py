@@ -1,7 +1,7 @@
 from parser.parser import parse_message
 from excel.writer import write_service
 from excel.workbook import get_workbook_path
-
+from utils.logger import log_import
 
 def print_service(service):
     print("\nDetected service:")
@@ -55,6 +55,8 @@ def main():
 
         print(f"Imported successfully to {workbook_path}")
         print(f"Sheet: {sheet_name}, Row: {row}")
+
+        log_import(service, workbook_path, sheet_name, row)
 
     else:
         print("Cancelled.")

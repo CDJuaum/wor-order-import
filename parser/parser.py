@@ -14,6 +14,7 @@ class Service:
     tag: str = "P"
 
     date: str | None = None
+    year: int | None = None
     time: str | None = None
     service: str | None = None
     address: str | None = None
@@ -115,16 +116,17 @@ def looks_like_datetime(text: str) -> bool:
 def extract_datetime(
     text: str,
     reference_date: datetime | None = None
-) -> tuple[str | None, str | None]:
-    
+) -> tuple[str | None, int | None, str | None]:
+
     text = normalize(text)
 
     if reference_date is None:
-        reference_date = datetime.today()
+        reference_date = datetime.now()
 
     today = reference_date
 
     date = today.strftime("%d/%m")
+    year = today.year
     time = None
 
     # -------------------------
@@ -137,7 +139,17 @@ def extract_datetime(
         day = int(date_match.group(1))
         month = int(date_match.group(2))
 
-        date = f"{day:02d}/{month:02d}"
+        target = today.replace(
+            month=month,
+            day=day
+        )
+
+        # If date already passed this year, assume next year
+        if target.date() < today.date():
+            target = target.replace(year=target.year + 1)
+
+        date = target.strftime("%d/%m")
+        year = target.year
 
     # -------------------------
     # Tomorrow
@@ -145,7 +157,9 @@ def extract_datetime(
 
     elif "amanha" in text:
         tomorrow = today + timedelta(days=1)
+
         date = tomorrow.strftime("%d/%m")
+        year = tomorrow.year
 
     # -------------------------
     # Weekday
@@ -164,6 +178,7 @@ def extract_datetime(
                 target = today + timedelta(days=days_ahead)
 
                 date = target.strftime("%d/%m")
+                year = target.year
                 break
 
     # -------------------------
@@ -183,7 +198,7 @@ def extract_datetime(
 
         time = f"{hour:02d}:{minutes}"
 
-    return date, time
+    return date, year, time
 
 
 def extract_client_phone(text: str) -> tuple[str | None, str | None]:
@@ -282,7 +297,7 @@ def parse_message(
 
     # Detect date/time
     if lines and looks_like_datetime(lines[0]):
-        result.date, result.time = extract_datetime(lines.pop(0))
+        result.date, result.year, result.time = extract_datetime(lines.pop(0))
 
     # Client
     if lines:

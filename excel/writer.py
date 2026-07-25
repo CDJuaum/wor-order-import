@@ -1,5 +1,6 @@
 from openpyxl import load_workbook
 from parser.parser import format_phone_for_excel
+from datetime import datetime
 
 
 def get_sheet_name(date: str) -> str:
@@ -40,7 +41,12 @@ def write_service(service, workbook_path: str):
 
     row = find_next_row(sheet)
 
-    sheet[f"A{row}"] = service.date
+    sheet[f"A{row}"] = datetime.strptime(
+        f"{service.date}/{service.year}",
+        "%d/%m/%Y"
+    )   
+    #sheet[f"A{row}"].number_format = "MM/DD"
+
     sheet[f"B{row}"] = service.time
     sheet[f"C{row}"] = service.tag
     sheet[f"D{row}"] = service.service
