@@ -1,0 +1,63 @@
+from parser.parser import parse_message
+from excel.writer import write_service
+
+
+WORKBOOK_PATH = "tests/output.xlsx"
+
+
+def print_service(service):
+    print("\nDetected service:")
+    print("-----------------")
+    print(f"Date:    {service.date}")
+    print(f"Hour:    {service.time}")
+    print(f"Tag:     {service.tag}")
+    print(f"Service: {service.service}")
+    print(f"Address: {service.address}")
+    print(f"Client:  {service.client}")
+    print(f"Phone:   {service.phone}")
+    print("-----------------")
+
+
+def main():
+
+    print("WhatsApp Excel Importer")
+    print("======================")
+    print("Paste the WhatsApp message.")
+    print("Finish by pressing ENTER twice.\n")
+
+    lines = []
+
+    while True:
+        line = input()
+
+        if line == "":
+            break
+
+        lines.append(line)
+
+    message = "\n".join(lines)
+
+    if not message.strip():
+        print("No message entered.")
+        return
+
+    service = parse_message(message)
+
+    print_service(service)
+
+    confirm = input("\nImport to Excel? (y/n): ").lower()
+
+    if confirm == "y":
+        write_service(
+            service,
+            WORKBOOK_PATH
+        )
+
+        print("Imported successfully.")
+
+    else:
+        print("Cancelled.")
+
+
+if __name__ == "__main__":
+    main()
