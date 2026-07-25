@@ -216,6 +216,29 @@ def extract_client_phone(text: str) -> tuple[str | None, str | None]:
 
     return client, phone
 
+def format_phone_for_excel(phone: str | None):
+    """
+    Converts Portuguese phone numbers to numbers.
+    Keeps international numbers as text.
+    """
+
+    if phone is None:
+        return None
+
+    # International numbers stay as text
+    if phone.startswith("+"):
+        return phone
+
+    # Multiple numbers stay as text because Excel cannot store "number / number"
+    if "/" in phone:
+        return phone
+
+    # Single Portuguese number becomes integer
+    if phone.isdigit():
+        return int(phone)
+
+    return phone
+
 def extract_tag(lines: list[str]) -> tuple[str, list[str]]:
     """
     Returns the service tag and removes the tag line from the message.

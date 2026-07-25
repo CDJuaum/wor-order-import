@@ -118,7 +118,7 @@
   },
   {
     "name": "Multiline address",
-    "message": "24/07 09:00\n\nInstalação de carregador\n\nRua Principal 123\n3º Direito\nLisboa\n\nJoão Silva - 912345678",
+    "message": "24/07 09:00\n\nInstalação de carregador\n\nRua Principal 123\n3º Direito\nLisboa\n\nJoão Silva 912345678",
     "expected": {
       "tag": "P",
       "date": "24/07",
