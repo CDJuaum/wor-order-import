@@ -1,8 +1,6 @@
 from parser.parser import parse_message
 from excel.writer import write_service
-
-
-WORKBOOK_PATH = "tests/output.xlsx"
+from excel.workbook import get_workbook_path
 
 
 def print_service(service):
@@ -47,10 +45,12 @@ def main():
 
     confirm = input("\nImport to Excel? (y/n): ").lower()
 
+    workbook_path = get_workbook_path(service.date)
+
     if confirm == "y":
         write_service(
             service,
-            WORKBOOK_PATH
+            workbook_path
         )
 
         print("Imported successfully.")

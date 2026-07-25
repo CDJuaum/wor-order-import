@@ -9,8 +9,10 @@ def get_sheet_name(date: str) -> str:
     Example:
         24/07 -> "24"
     """
-    return date.split("/")[0]
+    day = date.split("/")[0]
 
+    return str(int(day))  # Remove leading zeros
+    
 
 def find_next_row(sheet):
     """
