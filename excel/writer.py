@@ -50,4 +50,4 @@ def write_service(service, workbook_path: str):
 
     workbook.save(workbook_path)
 
-    return sheet_name, row
+    return workbook_path, sheet_name, row

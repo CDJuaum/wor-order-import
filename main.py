@@ -48,12 +48,13 @@ def main():
     workbook_path = get_workbook_path(service.date)
 
     if confirm == "y":
-        write_service(
+        workbook_path, sheet_name, row = write_service(
             service,
             workbook_path
         )
 
-        print("Imported successfully.")
+        print(f"Imported successfully to {workbook_path}")
+        print(f"Sheet: {sheet_name}, Row: {row}")
 
     else:
         print("Cancelled.")

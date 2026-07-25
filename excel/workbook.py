@@ -12,6 +12,8 @@ def get_workbook_path(date: str) -> str:
         24/07 -> 2026-07-Controle-Orcamentos.xlsx
     """
 
+    print(WORKBOOK_FOLDER.resolve())
+    
     day, month = date.split("/")
 
     pattern = f"*-{month}-Controle-Orcamentos.xlsx"
