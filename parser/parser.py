@@ -21,6 +21,27 @@ class Service:
     client: str | None = None
     phone: str | None = None
 
+    def validation_errors(self) -> list[str]:
+        errors = []
+        warnings = []
+
+        if not self.date:
+            errors.append("Missing date")
+
+        if not self.service:
+            errors.append("Missing service description")
+
+        if not self.address:
+            errors.append("Missing address")
+
+        if self.client == "Indef":
+            warnings.append("Missing client name, using 'Indef' as placeholder")
+
+        if not self.phone:
+            errors.append("Missing client phone number")
+
+        return errors, warnings
+
 # ==========================
 # Constants
 # ==========================    
@@ -228,6 +249,9 @@ def extract_client_phone(text: str) -> tuple[str | None, str | None]:
 
     client = text.replace(match.group(), "")
     client = client.replace("-", "").strip()
+
+    if not client:
+        client = "Indef"
 
     return client, phone
 

@@ -41,17 +41,48 @@ def main():
 
     service = parse_message(message)
 
+    errors, warnings = service.validation_errors()
+
+    if errors:
+        print("\nInvalid service data:")
+        for error in errors:
+            print(f"- {error}")
+        return
+
+    if warnings:
+        print("\nWarnings:")
+        for warning in warnings:
+            print(f"- {warning}")
+
     print_service(service)
 
     confirm = input("\nImport to Excel? (y/n): ").lower()
 
-    workbook_path = get_workbook_path(service.date)
+    try:
+        workbook_path = get_workbook_path(service.date)
+
+    except FileNotFoundError as e:
+        print(f"Error: {e}")
+        return
+
+    except RuntimeError as e:
+        print(f"Error: {e}")
+        return
 
     if confirm == "y":
-        workbook_path, sheet_name, row = write_service(
-            service,
-            workbook_path
-        )
+        try:
+            workbook_path, sheet_name, row = write_service(
+                service,
+                workbook_path
+            )
+
+        except PermissionError:
+            print(f"Error: Could not access {workbook_path}. Make sure the file is closed and try again.")
+            return
+
+        except KeyError as e:
+            print(f"Error: Sheet not found: {e}")
+            return
 
         print(f"Imported successfully to {workbook_path}")
         print(f"Sheet: {sheet_name}, Row: {row}")
