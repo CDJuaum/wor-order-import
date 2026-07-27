@@ -15,15 +15,13 @@ def is_duplicate(workbook_path: str, service) -> bool:
 
     sheet = workbook[sheet_name]
 
-    print(f"Checking for duplicates in sheet: {sheet_name}")
-
     for row in sheet.iter_rows(
         min_row=2,
         min_col=1,
         max_col=7, 
         values_only=True
     ):
-        print(f"Row data: {row}")  # Debugging line
+        
         _, _, tag, service_name, address, phone, client = row
 
         if (
