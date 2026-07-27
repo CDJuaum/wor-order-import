@@ -1,5 +1,6 @@
 from parser.parser import parse_message
 from excel.writer import write_service
+from excel.checks import is_duplicate
 from excel.workbook import get_workbook_path
 from utils.logger import log_import
 
@@ -71,6 +72,17 @@ def main():
 
     if confirm == "y":
         try:
+            if is_duplicate(workbook_path, service):
+                print("\nPossible duplicate detected.")
+
+                duplicate_confirm = input(
+                    "Import anyway? (y/n): "
+                ).lower()
+
+                if duplicate_confirm != "y":
+                    print("Cancelled.")
+                    return
+                
             workbook_path, sheet_name, row = write_service(
                 service,
                 workbook_path

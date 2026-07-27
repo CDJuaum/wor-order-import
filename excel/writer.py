@@ -45,7 +45,6 @@ def write_service(service, workbook_path: str):
         f"{service.date}/{service.year}",
         "%d/%m/%Y"
     )   
-    #sheet[f"A{row}"].number_format = "MM/DD"
 
     sheet[f"B{row}"] = service.time
     sheet[f"C{row}"] = service.tag
