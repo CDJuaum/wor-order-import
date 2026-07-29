@@ -72,7 +72,7 @@ class ClipboardListener:
 
             if not filter_clipboard_content(text):
                 return 0
-
+            
             listener.callback(text)
 
         return win32gui.DefWindowProc(

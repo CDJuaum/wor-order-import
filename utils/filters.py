@@ -9,7 +9,7 @@ def filter_clipboard_content(content: str) -> bool:
     """
 
     if not content.strip():
-        return False, "Clipboard content is empty."
+        return False
 
     lines = [
         line.strip()
@@ -18,7 +18,7 @@ def filter_clipboard_content(content: str) -> bool:
     ]
 
     if len(lines) < 3:
-        return False, "Clipboard content does not have enough lines to be a work order."
+        return False
 
     has_phone = (
         re.search(PHONE_REGEX, content)
@@ -26,6 +26,6 @@ def filter_clipboard_content(content: str) -> bool:
     )
 
     if not has_phone:
-        return False, "Clipboard content does not contain a valid phone number."
+        return False
 
     return True
