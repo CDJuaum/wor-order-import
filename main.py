@@ -3,7 +3,8 @@ from excel.writer import write_service
 from excel.checks import is_duplicate
 from excel.workbook import get_workbook_path
 from utils.logger import log_import
-from utils.clipboard import read_clipboard
+from utils.clipboard_monitor import ClipboardListener
+
 
 def print_service(service):
     print("\nDetected service:")
@@ -18,18 +19,7 @@ def print_service(service):
     print("-----------------")
 
 
-def main():
-
-    print("WhatsApp Excel Importer")
-    print("======================")
-    print("Paste the WhatsApp message.")
-    print("Finish by pressing ENTER twice.\n")
-
-    message = read_clipboard()
-
-    if not message.strip():
-        print("No message entered.")
-        return
+def process_message(message):
 
     service = parse_message(message)
 
@@ -50,6 +40,10 @@ def main():
 
     confirm = input("\nImport to Excel? (y/n): ").lower()
 
+    if confirm != "y":
+        print("Cancelled.")
+        return
+
     try:
         workbook_path = get_workbook_path(service.date)
 
@@ -61,39 +55,54 @@ def main():
         print(f"Error: {e}")
         return
 
-    if confirm == "y":
-        try:
-            if is_duplicate(workbook_path, service):
-                print("\nPossible duplicate detected.")
+    try:
+        if is_duplicate(workbook_path, service):
+            print("\nPossible duplicate detected.")
 
-                duplicate_confirm = input(
-                    "Import anyway? (y/n): "
-                ).lower()
+            duplicate_confirm = input(
+                "Import anyway? (y/n): "
+            ).lower()
 
-                if duplicate_confirm != "y":
-                    print("Cancelled.")
-                    return
-                
-            workbook_path, sheet_name, row = write_service(
-                service,
-                workbook_path
-            )
+            if duplicate_confirm != "y":
+                print("Cancelled.")
+                return
 
-        except PermissionError:
-            print(f"Error: Could not access {workbook_path}. Make sure the file is closed and try again.")
-            return
+        workbook_path, sheet_name, row = write_service(
+            service,
+            workbook_path
+        )
 
-        except KeyError as e:
-            print(f"Error: Sheet not found: {e}")
-            return
+    except PermissionError:
+        print(
+            f"Error: Could not access {workbook_path}. "
+            "Make sure the file is closed and try again."
+        )
+        return
 
-        print(f"Imported successfully to {workbook_path}")
-        print(f"Sheet: {sheet_name}, Row: {row}")
+    except KeyError as e:
+        print(f"Error: Sheet not found: {e}")
+        return
 
-        log_import(service, workbook_path, sheet_name, row)
+    print(f"Imported successfully to {workbook_path}")
+    print(f"Sheet: {sheet_name}, Row: {row}")
 
-    else:
-        print("Cancelled.")
+    log_import(
+        service,
+        workbook_path,
+        sheet_name,
+        row
+    )
+
+
+def main():
+
+    print("WhatsApp Excel Importer")
+    print("======================")
+    print("Waiting for clipboard service messages...\n")
+
+    listener = ClipboardListener(process_message)
+
+    listener.run()
 
 
 if __name__ == "__main__":
