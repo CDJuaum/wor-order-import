@@ -3,6 +3,7 @@ from excel.writer import write_service
 from excel.checks import is_duplicate
 from excel.workbook import get_workbook_path
 from utils.logger import log_import
+from utils.clipboard import read_clipboard
 
 def print_service(service):
     print("\nDetected service:")
@@ -24,17 +25,7 @@ def main():
     print("Paste the WhatsApp message.")
     print("Finish by pressing ENTER twice.\n")
 
-    lines = []
-
-    while True:
-        line = input()
-
-        if line == "":
-            break
-
-        lines.append(line)
-
-    message = "\n".join(lines)
+    message = read_clipboard()
 
     if not message.strip():
         print("No message entered.")
