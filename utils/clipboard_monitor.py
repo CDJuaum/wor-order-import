@@ -67,7 +67,7 @@ class ClipboardListener:
 
             if text == listener.last_clipboard_content:
                 return 0
-
+ 
             listener.last_clipboard_content = text
 
             if not filter_clipboard_content(text):

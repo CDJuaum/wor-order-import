@@ -19,6 +19,9 @@ def print_service(service):
 
 
 def process_message(message):
+    '''
+    Processes a message from the clipboard service and imports it to Excel.
+    '''
 
     service = parse_message(message)
 
